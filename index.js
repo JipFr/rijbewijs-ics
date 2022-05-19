@@ -3,12 +3,10 @@ import fetch from "node-fetch";
 import ics from "ics";
 import fs from "fs";
 
-(async () => {
-	const { username, password, school } = await prompt.get([
-		"school",
-		"username",
-		"password",
-	]);
+async function thing(thing) {
+	let d = thing ? thing : await prompt.get(["school", "username", "password"]);
+
+	const { school, username, password } = d;
 
 	// Request authentication stuff
 	const authUrl = "https://dashboard.dation.nl/oauth/v2/auth";
@@ -56,7 +54,7 @@ import fs from "fs";
 			Accept: "application/json",
 			Authorization: `Bearer ${firebaseBody.idToken}`,
 			"Cache-Control": "no-store",
-			"X-Dation-Handle": "vanherpt",
+			"X-Dation-Handle": school,
 		},
 	});
 	const appointmentsBody = await appointmentsReq.json();
@@ -116,5 +114,7 @@ import fs from "fs";
 	if (error) throw console.log(error);
 
 	fs.writeFileSync("rijles.ics", value);
-	console.log("Wrote to rijles.ics \n".repeat(50));
-})();
+	console.log("Wrote to rijles.ics");
+}
+
+export default thing;
